@@ -15,11 +15,14 @@ export default {
                 loginText: "#5A70F7",
                 button1: "#A0ABC5",
                 button1Hover: "#919AB0",
+                closeButton: "#0B57D0",
             },
             fontSize: {
                 "12px": "12px",
                 "14px": "14px",
                 "16px": "16px",
+                "18px": "18px",
+                "24px": "24px",
             },
             borderRadius: {
                 round: "10px",

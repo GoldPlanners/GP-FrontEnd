@@ -1,0 +1,125 @@
+@charset "utf-8";
+
+.fc .fc-day-sun a {
+    color: red;
+}
+
+/* 토요일 날짜: 파란색 */
+.fc .fc-day-sat a {
+    color: blue;
+}
+
+.fc .fc-toolbar-title {
+    font-weight: normal;
+}
+
+.fc .fc-toolbar {
+    height: 20px;
+}
+
+/* 툴바의 버튼 */
+.fc .fc-toolbar-chunk .fc-button {
+    position: relative;
+    left: 30px;
+    color: black;
+    background-color: transparent;
+    border: none;
+    font-size: 18px;
+    
+}
+
+/* 툴바 버튼 포커스 시 그림자 제거 */
+.fc .fc-toolbar-chunk .fc-button:focus {
+    box-shadow: none;
+}
+
+/* 툴바 버튼 hover 시 배경색 변경 */
+.fc .fc-toolbar-chunk .fc-button:hover {
+    background-color: #7b7b7b;
+}
+
+/* 날짜변경 화살표 아이콘 */
+.fc .fc-button-primary span {
+    font-weight: 500;
+    font-size: 28px;
+}
+
+/* 요일의 높이 */
+.fc-theme-standard th {
+    height: 35px;
+    background: #f5f5f5;
+    border: 1px solid #e8e8e8;
+    font-weight: normal;
+    color: #7b7b7b;
+    vertical-align: middle;
+}
+
+/* Tody Cell에 배경색 주기 */
+.fc .fc-daygrid-day.fc-day-today {
+    background-color: #e0e0e0;
+}
+
+/* 날짜 Cell 프레임 */
+.fc .fc-daygrid-day-frame {
+    padding: 10px;
+}
+
+
+/* 월간,주간 view의 Cell이 시작하는 위치 */
+.fc .fc-daygrid-day-top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20px;
+    margin-bottom: 3px;
+}
+
+/* 날짜 숫자 z-index 초기화 */
+.fc .fc-daygrid-day-number {
+    z-index: 1;
+}
+
+/* 이벤트 막대 스타일 */
+.fc-event {
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+
+.fc .fc-daygrid-day-frame {
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow-y: hidden;
+}
+
+/* 이벤트 목록 높이 고정 및 스크롤 활성화 */
+.fc .fc-daygrid-day-events {
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+/* 추가적인 스타일 설정 (선택 사항) */
+.fc-event {
+    margin: 2px 0;
+    padding: 4px;
+    font-size: 12px;
+}
+
+/* 스크롤바 스타일 */
+.fc .fc-daygrid-day-events::-webkit-scrollbar {
+    width: 6px;
+}
+
+.fc .fc-daygrid-day-events::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 3px;
+}
+
+.fc .fc-daygrid-day-events::-webkit-scrollbar-thumb:hover {
+    background-color: #999;
+}

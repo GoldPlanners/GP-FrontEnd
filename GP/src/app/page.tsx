@@ -1,5 +1,5 @@
-import Image from "next/image";
+import { redirect } from "next/navigation";
 
-export default function HomePage() {
-    return <h1>Welcome to the Main Page</h1>;
+export default function MainPage() {
+    redirect("/login");
 }
