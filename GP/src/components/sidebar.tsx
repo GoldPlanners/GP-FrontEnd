@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
@@ -38,14 +40,14 @@ const Sidebar: React.FC<SidebarProps> = ({ onAddEvent, onClose }) => {
                     <img
                         src="logo/logo2.svg"
                         alt="logo2"
-                        className="w-[115px] h-auto ml-5"
+                        className="w-[115px] h-auto ml-5 cursor-pointer"
                     />
                 </div>
             </div>
 
             <div className="relative">
                 <button
-                    className="w-[134px] h-[50px] mb-[40px] bg-realBackground border py-2 rounded-round2 flex items-center justify-center space-x-2"
+                    className="w-[134px] h-[50px] mb-[30px] bg-realBackground border py-2 rounded-round2 flex items-center justify-center space-x-2"
                     onClick={toggleModal}
                 >
                     <div>일정 추가</div>
@@ -60,7 +62,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onAddEvent, onClose }) => {
                 )}
             </div>
 
-            <div className="mb-10">
+            <div className="mb-4">
                 <div className="flex items-center justify-between">
                     <h3 className="font-semibold mb-2">캘린더 항목</h3>
                     <button
@@ -104,10 +106,10 @@ const Sidebar: React.FC<SidebarProps> = ({ onAddEvent, onClose }) => {
                 </AnimatePresence>
             </div>
 
-            <div className="space-y-2 mt-2">
+            <div className="space-y-2 mt-2 font-semibold">
                 <Link href="/vacation">
                     <div className="w-full py-2 mb-4 bg-realBackground ">
-                        휴가 페이지
+                        휴가 관리
                     </div>
                 </Link>
                 <Link href="/notice">
