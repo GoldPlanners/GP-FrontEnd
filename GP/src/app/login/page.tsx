@@ -1,15 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import { FC, FormEvent } from "react";
 
-export default function LoginPage() {
+const LoginPage: FC = () => {
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        console.log("Form submitted");
+    };
+
     return (
         <div className="flex items-center justify-center h-screen bg-realBackground">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
                 <div className="flex flex-col items-center mb-6">
                     <img src="/logo/logo.svg" alt="Logo" className="mb-2" />
                 </div>
-                <form>
+                <form onSubmit={handleSubmit}>
                     <div className="mb-4 border rounded-round">
                         <label
                             htmlFor="email"
@@ -21,7 +27,7 @@ export default function LoginPage() {
                             id="email"
                             type="email"
                             placeholder="아이디를 입력해주세요"
-                            className="w-full px-4 py-2 border-none rounded-lg text-14px text-gray-700 focus:outline-none "
+                            className="w-full px-4 py-2 border-none rounded-lg text-14px text-gray-700 focus:outline-none"
                         />
                     </div>
 
@@ -36,7 +42,7 @@ export default function LoginPage() {
                             id="password"
                             type="password"
                             placeholder="비밀번호를 입력해주세요"
-                            className="w-full px-4 py-2 border-none rounded-lg text-14px text-gray-700 focus:outline-none "
+                            className="w-full px-4 py-2 border-none rounded-lg text-14px text-gray-700 focus:outline-none"
                         />
                     </div>
 
@@ -63,4 +69,6 @@ export default function LoginPage() {
             </div>
         </div>
     );
-}
+};
+
+export default LoginPage;
