@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 
 interface ModalProps {
