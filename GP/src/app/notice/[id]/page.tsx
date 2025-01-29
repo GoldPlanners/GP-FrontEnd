@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Sidebar from "@/components/sidebar2";
+import Sidebar from "@/app/components/sidebar2";
 
 interface Notice {
     id: number;
