@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Sidebar from "@/components/sidebar2";
+import Sidebar from "@/app/components/sidebar2";
 
 interface Notice {
     id: number;
@@ -39,7 +39,10 @@ const NoticeListPage = () => {
                 <h1 className="text-2xl font-bold mb-4">공지사항</h1>
                 <div className="space-y-4">
                     {notices.map((notice) => (
-                        <div key={notice.id} className="border p-4 rounded-lg bg-white">
+                        <div
+                            key={notice.id}
+                            className="border p-4 rounded-lg bg-white"
+                        >
                             <h2 className="font-semibold text-lg">
                                 <Link href={`/notice/${notice.id}`}>
                                     {notice.title}

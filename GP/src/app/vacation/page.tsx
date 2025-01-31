@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import Sidebar from "@/components/sidebar2";
+import Sidebar from "@/app/components/sidebar2";
 
 interface Vacation {
     date: string;
@@ -12,7 +12,7 @@ interface Vacation {
 const VacationPage = () => {
     const [remainingVacation, setRemainingVacation] = useState(10);
     const [usedVacation, setUsedVacation] = useState(2);
-    const [vacationHistory, setVacationHistory] = useState<Vacation[]>([]); 
+    const [vacationHistory, setVacationHistory] = useState<Vacation[]>([]);
 
     useEffect(() => {
         const fetchedHistory: Vacation[] = [

@@ -5,8 +5,8 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin, { DateClickArg } from "@fullcalendar/interaction";
 import koLocale from "@fullcalendar/core/locales/ko";
-import Modal from "@/components/modal";
-import Sidebar from "@/components/sidebar";
+import Modal from "@/app/components/modal";
+import Sidebar from "@/app/components/sidebar";
 
 import "@/styles/calendar.css";
 
@@ -63,7 +63,12 @@ const Calendar = () => {
 
     return (
         <div className="flex h-screen">
-            {isSidebarVisible && <Sidebar onAddEvent={handleAddEvent} onClose={handleSidebarToggle}/>}
+            {isSidebarVisible && (
+                <Sidebar
+                    onAddEvent={handleAddEvent}
+                    onClose={handleSidebarToggle}
+                />
+            )}
             <div className="flex flex-col flex-1">
                 <div className="flex-1 p-4 overflow-auto bg-realBackground">
                     <FullCalendar

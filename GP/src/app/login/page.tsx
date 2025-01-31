@@ -1,12 +1,31 @@
 "use client";
 
 import Link from "next/link";
-import { FC, FormEvent } from "react";
+import { FC, FormEvent, useState } from "react";
+import { login } from "@/api/auth/auth";
+import { useRouter } from "next/navigation";
 
 const LoginPage: FC = () => {
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const [loginId, setLoginId] = useState<string>("");
+    const [loginPw, setLoginPw] = useState<string>("");
+    const [error, setError] = useState<string>("");
+    const router = useRouter();
+
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log("Form submitted");
+        setError("");
+
+        try {
+            const data = await login(loginId, loginPw);
+            localStorage.setItem("accessToken", data.accessToken);
+            localStorage.setItem("refreshToken", data.refreshToken);
+            router.push("/calendar");
+        } catch (err: any) {
+            console.error("Login failed:", err);
+            setError(
+                "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요."
+            );
+        }
     };
 
     return (
@@ -18,31 +37,35 @@ const LoginPage: FC = () => {
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4 border rounded-round">
                         <label
-                            htmlFor="email"
+                            htmlFor="loginId"
                             className="block text-sm font-medium text-gray-700 mb-1 ml-4 mt-2"
                         >
                             아이디
                         </label>
                         <input
-                            id="email"
-                            type="email"
+                            id="loginId"
+                            type="text"
+                            value={loginId}
                             placeholder="아이디를 입력해주세요"
                             className="w-full px-4 py-2 border-none rounded-lg text-14px text-gray-700 focus:outline-none"
+                            onChange={(e) => setLoginId(e.target.value)}
                         />
                     </div>
 
                     <div className="mb-6 border rounded-round">
                         <label
-                            htmlFor="password"
+                            htmlFor="loginPw"
                             className="block text-sm font-medium text-gray-700 mb-1 ml-4 mt-2"
                         >
                             비밀번호
                         </label>
                         <input
-                            id="password"
+                            id="loginPw"
                             type="password"
+                            value={loginPw}
                             placeholder="비밀번호를 입력해주세요"
                             className="w-full px-4 py-2 border-none rounded-lg text-14px text-gray-700 focus:outline-none"
+                            onChange={(e) => setLoginPw(e.target.value)}
                         />
                     </div>
 

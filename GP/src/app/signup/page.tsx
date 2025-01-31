@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { FiArrowLeft } from "react-icons/fi";
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { signup, checkLoginIdExists } from "@/api/auth/auth";
 
 const formatPhoneNumber = (value: string): string => {
     let formattedValue = value.replace(/\D/g, "");
@@ -34,45 +36,46 @@ type newUserType = {
     relationship: string;
 };
 
-const schema = z
-    .object({
-        userId: z.string().min(1, "아이디(이름)를 입력해주세요"),
-        password: z
-            .string()
-            .min(4, "비밀번호는 4자 이상이어야 합니다")
-            .max(20, "비밀번호는 20자 이내로 입력해주세요"),
-        confirmPassword: z.string(),
-        phone: z
-            .string()
-            .refine((value) => value.startsWith("010"), {
-                message: "010으로 시작하는 11자리 숫자를 입력해주세요.",
-            })
-            .refine((value) => value.length >= 11, {
-                message: "연락처는 11자리여야 합니다.",
-            }),
-        emergencyPhone: z
-            .string()
-            .refine((value) => value.startsWith("010"), {
-                message: "010으로 시작하는 11자리 숫자를 입력해주세요.",
-            })
-            .refine((value) => value.length >= 11, {
-                message: "긴급 연락처는 11자리여야 합니다.",
-            }),
-        relationship: z.string().min(1, "관계를 선택해주세요"),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-        message: "비밀번호가 일치하지 않습니다.",
-        path: ["confirmPassword"],
-    });
+const schema = z.object({
+    userId: z.string().min(1, "아이디(이름)를 입력해주세요"),
+    password: z
+        .string()
+        .min(4, "비밀번호는 4자 이상이어야 합니다")
+        .max(20, "비밀번호는 20자 이내로 입력해주세요"),
+    confirmPassword: z.string().min(1, "비밀번호 확인을 입력해주세요"),
+    phone: z
+        .string()
+        .refine((value) => value.startsWith("010"), {
+            message: "010으로 시작하는 11자리 숫자를 입력해주세요.",
+        })
+        .refine((value) => value.length >= 11, {
+            message: "연락처는 11자리여야 합니다.",
+        }),
+    emergencyPhone: z
+        .string()
+        .refine((value) => value.startsWith("010"), {
+            message: "010으로 시작하는 11자리 숫자를 입력해주세요.",
+        })
+        .refine((value) => value.length >= 11, {
+            message: "긴급 연락처는 11자리여야 합니다.",
+        }),
+    relationship: z.string().min(1, "관계를 선택해주세요"),
+});
 
 export default function SignupPage() {
     const [phone, setPhone] = useState<string>("");
     const [emergencyPhone, setEmergencyPhone] = useState<string>("");
+    const [isUserIdAvailable, setIsUserIdAvailable] = useState<boolean | null>(
+        null
+    );
+    const [passwordMatch, setPasswordMatch] = useState<boolean | null>(null);
+    const router = useRouter();
 
     const {
         register,
         handleSubmit,
         control,
+        watch,
         formState: { errors },
     } = useForm({
         resolver: zodResolver(schema),
@@ -86,21 +89,52 @@ export default function SignupPage() {
         },
     });
 
-    const handleDuplicateCheck = () => {};
+    const handleDuplicateCheck = async () => {
+        const userId = watch("userId");
+        if (userId) {
+            try {
+                const response = await checkLoginIdExists(userId);
+                if (response) {
+                    setIsUserIdAvailable(false);
+                } else {
+                    setIsUserIdAvailable(true);
+                }
+            } catch (error) {
+                console.error("중복 검사 실패:", error);
+            }
+        }
+    };
 
-    const onSubmit = (data: newUserType) => {
+    const onSubmit = async (data: newUserType) => {
+        if (isUserIdAvailable === null) {
+            alert("아이디 중복 검사를 진행해주세요.");
+            return;
+        }
+
+        if (!isUserIdAvailable) {
+            alert("이미 존재하는 아이디입니다. 다른 아이디를 선택해주세요.");
+            return;
+        }
+
         const phoneWithoutHyphen = data.phone.replace(/-/g, "");
         const emergencyPhoneWithoutHyphen = data.emergencyPhone.replace(
             /-/g,
             ""
         );
 
-        console.log("onSubmit called", {
-            ...data,
-            phone: phoneWithoutHyphen,
-            emergencyPhone: emergencyPhoneWithoutHyphen,
-        });
-
+        try {
+            const response = await signup(
+                data.userId,
+                data.password,
+                data.userId,
+                phoneWithoutHyphen,
+                emergencyPhoneWithoutHyphen,
+                data.relationship
+            );
+            router.push("/login");
+        } catch (error) {
+            console.error("회원가입 실패:", error);
+        }
     };
 
     const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -114,6 +148,17 @@ export default function SignupPage() {
         const { value } = e.target;
         setEmergencyPhone(formatPhoneNumber(value));
     };
+
+    useEffect(() => {
+        const password = watch("password");
+        const confirmPassword = watch("confirmPassword");
+        if (confirmPassword && password !== confirmPassword) {
+            setPasswordMatch(false);
+        } else if (confirmPassword && password === confirmPassword) {
+            setPasswordMatch(true);
+        }
+    }, [watch("password"), watch("confirmPassword")]);
+
     return (
         <div className="flex items-center justify-center h-screen bg-realBackground">
             <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
@@ -159,6 +204,19 @@ export default function SignupPage() {
                             {errors.userId.message}
                         </p>
                     )}
+                    {isUserIdAvailable !== null && (
+                        <p
+                            className={`text-xs mt-1 ml-4 ${
+                                isUserIdAvailable
+                                    ? "text-blue-500"
+                                    : "text-red-500"
+                            }`}
+                        >
+                            {isUserIdAvailable
+                                ? "사용 가능한 아이디입니다."
+                                : "아이디가 이미 존재합니다."}
+                        </p>
+                    )}
 
                     <div className="mt-4 border rounded-round">
                         <label
@@ -199,6 +257,17 @@ export default function SignupPage() {
                     {errors.confirmPassword && (
                         <p className="text-red-500 text-xs mt-1 ml-4">
                             {errors.confirmPassword.message}
+                        </p>
+                    )}
+                    {passwordMatch !== null && (
+                        <p
+                            className={`text-xs mt-1 ml-4 ${
+                                passwordMatch ? "text-blue-500" : "text-red-500"
+                            }`}
+                        >
+                            {passwordMatch
+                                ? "비밀번호가 일치합니다."
+                                : "비밀번호가 일치하지 않습니다."}
                         </p>
                     )}
 
@@ -284,7 +353,6 @@ export default function SignupPage() {
                                     <option value="가족">가족</option>
                                     <option value="친구">친구</option>
                                     <option value="동료">동료</option>
-                                    <option value="연인">연인</option>
                                     <option value="기타">기타</option>
                                 </select>
                             </div>
@@ -295,18 +363,13 @@ export default function SignupPage() {
                             {errors.emergencyPhone.message}
                         </p>
                     )}
-                    {errors.relationship && (
-                        <p className="text-red-500 text-xs mt-1 ml-4">
-                            {errors.relationship.message}
-                        </p>
-                    )}
 
-                    <div className="flex justify-center">
+                    <div className="mt-6">
                         <button
                             type="submit"
-                            className="mt-4 w-auto bg-button1 hover:bg-button1Hover text-white py-2 px-8 rounded-round2 focus:outline-none focus:ring-2"
+                            className="w-full py-2 bg-button1 hover:bg-button1Hover text-white rounded-lg focus:outline-none"
                         >
-                            회원가입
+                            가입하기
                         </button>
                     </div>
                 </form>
