@@ -16,15 +16,17 @@ const LoginPage: FC = () => {
         setError("");
 
         try {
-            const data = await login(loginId, loginPw);
-            localStorage.setItem("accessToken", data.accessToken);
-            localStorage.setItem("refreshToken", data.refreshToken);
+            await login(loginId, loginPw);
             router.push("/calendar");
         } catch (err: any) {
             console.error("Login failed:", err);
-            setError(
-                "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요."
-            );
+            if (
+                err.message === "로그인 실패: 아이디와 비밀번호를 확인해주세요."
+            ) {
+                alert(err.message);
+            } else {
+                setError(err.message);
+            }
         }
     };
 

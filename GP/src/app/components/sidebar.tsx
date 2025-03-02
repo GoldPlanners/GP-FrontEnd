@@ -8,14 +8,21 @@ import "react-calendar/dist/Calendar.css";
 import Modal from "./modal";
 
 interface SidebarProps {
-    onAddEvent: (event: { title: string; start: string; end: string; allDay: boolean }) => void;
+    onAddEvent: (event: { title: string; start: string; end: string; allDay: boolean; createdBy: string}) => void;
     onClose: () => void;
+    onCalendarSelectionChange: (selectedCalendars: string[]) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onAddEvent, onClose }) => {
+const Sidebar: React.FC<SidebarProps> = ({ onAddEvent, onClose, onCalendarSelectionChange }) => {
     const [isClient, setIsClient] = useState<boolean>(false);
     const [isCalendarMenuOpen, setIsCalendarMenuOpen] = useState<boolean>(true);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [selectedCalendars, setSelectedCalendars] = useState<string[]>([
+        "mySchedule", 
+        "sharedSchedule", 
+        "myVacation", 
+        "sharedVacation"
+    ]);
 
     const toggleCalendarMenu = (): void => {
         setIsCalendarMenuOpen(!isCalendarMenuOpen);
@@ -24,6 +31,20 @@ const Sidebar: React.FC<SidebarProps> = ({ onAddEvent, onClose }) => {
     const toggleModal = (): void => {
         setIsModalOpen(!isModalOpen);
     };
+
+    const handleCheckboxChange = (id: string, checked: boolean): void => {
+        setSelectedCalendars((prevSelected) => {
+            if (checked) {
+                return [...prevSelected, id];
+            } else {
+                return prevSelected.filter((calendar) => calendar !== id); 
+            }
+        });
+    };
+
+    useEffect(() => {
+        onCalendarSelectionChange(selectedCalendars); 
+    }, [selectedCalendars, onCalendarSelectionChange]);
 
     useEffect(() => {
         setIsClient(true);
@@ -97,6 +118,8 @@ const Sidebar: React.FC<SidebarProps> = ({ onAddEvent, onClose }) => {
                                         id={id}
                                         name={id}
                                         className="mr-2"
+                                        checked={selectedCalendars.includes(id)}
+                                        onChange={(e) => handleCheckboxChange(id, e.target.checked)}
                                     />
                                     <label htmlFor={id}>{label}</label>
                                 </div>
